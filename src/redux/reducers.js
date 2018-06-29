@@ -1,6 +1,5 @@
 import {
     LOCATION_CHANGED,
-    INVALIDATE_WEATHER,
     REQUEST_WEATHER,
     RECEIVED_WEATHER,
     FAILED_REQUEST_WEATHER,
@@ -8,10 +7,7 @@ import {
 } from './actions';
 
 export const defaultState = {
-    location: {
-        lat: 45,
-        lng: 45,
-    },
+    location: null,
     [weatherTypes.currentWeather]: {
         fetching: false,
         hasData: false,
@@ -37,8 +33,6 @@ function weatherReducer(state = {}, action) {
             return { ...state, fetching: true };
         case FAILED_REQUEST_WEATHER:
             return { ...state, fetching: false };
-        case INVALIDATE_WEATHER:
-            return { ...state, hasData: false };
         default:
             return state;
     }
@@ -51,7 +45,6 @@ export function rootReducer(state = defaultState, action) {
         case REQUEST_WEATHER:
         case RECEIVED_WEATHER:
         case FAILED_REQUEST_WEATHER:
-        case INVALIDATE_WEATHER:
             return { ...state, [action.weatherType]: weatherReducer(state[action.weatherType], action) };
         default:
             return state;

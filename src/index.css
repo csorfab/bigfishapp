@@ -3,3 +3,55 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.forecastSelector {
+  display: block;
+  overflow: scroll;
+}
+
+.forecastSelector table {
+  border-spacing: 5px;
+  border-collapse: separate;
+}
+
+
+.forecastSelector td {
+  background-color: #DDDDDD;
+  padding: 5px;
+  text-align: center;
+}
+
+.forecastSelector td.selected {
+  background-color: #CCCCCC; 
+}
+
+.mainView {
+  width: 40%;
+  background-color: #eeeeee;
+  border-radius: 5px;
+  padding: 15px 30px 15px 30px;
+}
+
+.geosuggest {
+  margin: 0 !important;
+  padding: 0;
+  font-size: 14px !important; 
+}
+
+.geosuggest__input {
+  width: 250px !important;
+  border-radius: 5px;
+}
+
+.geosuggest__item {
+  font-size: 14px !important; 
+}
+
+.geosuggest__suggests {
+  width: 250px !important;
+
+  border: 1px solid #e96666;
+  border-radius: 0px 0px 5px 5px !important;
+  border-top-width: 0;
+  margin-top: -5px !important;
+}

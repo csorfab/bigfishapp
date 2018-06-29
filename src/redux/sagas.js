@@ -1,6 +1,9 @@
-import { call, put, takeEvery, takeLatest, select, all } from 'redux-saga/effects';
-import { requestWeather, receivedWeather, failedRequestWeather, REQUEST_WEATHER, LOCATION_CHANGED, weatherTypes } from './actions';
+import { call, put, take, takeLatest, select, all } from 'redux-saga/effects';
+import { delay } from 'redux-saga';
+import { requestWeather, receivedWeather, failedRequestWeather, REQUEST_WEATHER, LOCATION_CHANGED, weatherTypes, locationChanged } from './actions';
 import Api from '../api';
+
+const AUTO_UPDATE_INTERVAL = 60000;
 
 export function* fetchWeather(action) {
     try {
@@ -8,19 +11,45 @@ export function* fetchWeather(action) {
         const weather = yield call(Api.fetchWeather, action.weatherType, location);
         yield put(receivedWeather(action.weatherType, weather.data));
     } catch (e) {
-        // console.log(e);
         yield put(failedRequestWeather(action.weatherType));
     }
 }
 
-function* locationChanged(action) {
+function* updateAllWeathers() {
     yield put(requestWeather(weatherTypes.forecastWeather));
     yield put(requestWeather(weatherTypes.currentWeather));
 }
 
+function* getUserLocation() {
+    yield delay(500);
+
+    try {
+        const userLocation = yield call(Api.getUserLocation);
+        const currentLocation = yield select(state => state.location);
+
+        if (!currentLocation) {
+            yield put(locationChanged(userLocation));
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+function* autoUpdateLoop() {
+    yield take(LOCATION_CHANGED);
+
+    while (true) {
+        yield delay(AUTO_UPDATE_INTERVAL);
+        yield call(updateAllWeathers);
+    }
+}
+
 export function* weatherSaga(action) {
     yield all([
-        takeEvery(REQUEST_WEATHER, fetchWeather),
-        takeLatest(LOCATION_CHANGED, locationChanged),
+        takeLatest(takenAction => takenAction.type === REQUEST_WEATHER && takenAction.weatherType === weatherTypes.forecastWeather, fetchWeather),
+        takeLatest(takenAction => takenAction.type === REQUEST_WEATHER && takenAction.weatherType === weatherTypes.currentWeather, fetchWeather),
+        takeLatest(LOCATION_CHANGED, updateAllWeathers),
+        call(autoUpdateLoop),
+        call(getUserLocation),
     ]);
 }

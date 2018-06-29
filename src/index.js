@@ -1,8 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import Root from './Root';
 import registerServiceWorker from './registerServiceWorker';
+import createStore from './redux/createStore';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const store = createStore();
+
+ReactDOM.render(<Root store={store} />, document.getElementById('root'));
 registerServiceWorker();
