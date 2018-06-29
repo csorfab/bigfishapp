@@ -1,15 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { locationChanged } from './redux/actions';
+import { Switch } from 'react-router';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap';
 import { Navbar, NavItem, Nav, Row, Grid, Col } from 'react-bootstrap';
-import moment from 'moment';
-import './App.css';
-import 'react-geosuggest/module/geosuggest.css';
-
-
 import Geosuggest from 'react-geosuggest';
+import moment from 'moment';
+// import './App.css';
+import loader from './ajax-loader-white.gif';
+import 'react-geosuggest/module/geosuggest.css';
 
 const ForecastSelector = ({ weather, selectedId }) => (
     <Row>
@@ -35,11 +35,20 @@ const ForecastSelector = ({ weather, selectedId }) => (
 
 const KelvinToCelsius = kelvin => Math.round(kelvin - 273.15);
 
+function FetchingIcon({ isFetching, style, children }) {
+    return (
+        <span style={style}>
+            <img src={loader} style={{ marginRight: '10px', visibility: isFetching ? 'visible' : 'hidden' }} alt="Loading..." />
+            {children}
+        </span>
+    )
+}
+
 function WeatherView({ weather, type, day }) {
     if (!weather.hasData) {
         return (
             <h3 style={{ textAlign: 'center' }}>
-                Please select a location or wait for your browser to supply your location
+                <FetchingIcon isFetching={weather.fetching} /> Please select a location or wait for your browser to supply your location
             </h3>
         )
     }
@@ -65,6 +74,7 @@ function WeatherView({ weather, type, day }) {
                     <h1>
                         Weather near {weather.data.name || weather.data.city.name}
                     </h1>
+                    <FetchingIcon isFetching={weather.fetching} />
                 </Col>
             </Row>
             {type === 'forecast'
@@ -114,12 +124,12 @@ const WeatherNav = ({ locationChanged }) => (
             <IndexLinkContainer to="/">
                 <NavItem eventkey={1}>
                     Current Weather
-                        </NavItem>
+                </NavItem>
             </IndexLinkContainer>
             <LinkContainer to="/forecast">
                 <NavItem>
                     Forecast
-                        </NavItem>
+                </NavItem>
             </LinkContainer>
         </Nav>
         <LocationSearch locationChanged={locationChanged} />
@@ -130,18 +140,20 @@ const App = ({ locationChanged, currentWeather, forecastWeather }) => (
     <Router>
         <div>
             <WeatherNav locationChanged={locationChanged} />
-            <Route
-                exact path="/"
-                component={() => <WeatherView weather={currentWeather} type="current" />}
-            />
-            <Route
-                exact path="/forecast"
-                component={() => <WeatherView weather={forecastWeather} type="forecast" day={0} />}
-            />
-            <Route
-                path="/forecast/:n"
-                component={({ match }) => <WeatherView weather={forecastWeather} type="forecast" day={match.params.n} />}
-            />
+            <Switch>
+                <Route
+                    exact path="/"
+                    component={() => <WeatherView weather={currentWeather} type="current" />}
+                />
+                <Route
+                    exact path="/forecast"
+                    component={() => <WeatherView weather={forecastWeather} type="forecast" day={0} />}
+                />
+                <Route
+                    path="/forecast/:n"
+                    component={({ match }) => <WeatherView weather={forecastWeather} type="forecast" day={match.params.n} />}
+                />
+            </Switch>
         </div>
     </Router>
 );
