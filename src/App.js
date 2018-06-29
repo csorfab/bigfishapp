@@ -16,15 +16,17 @@ const ForecastSelector = ({ weather, selectedId }) => (
         <Col md={12}>
             <div className="forecastSelector">
                 <table>
-                    <tr>
-                        {weather.data.list.map((weatherItem, id) => (
-                            <td key={id} className={id === selectedId ? "selected" : ""}>
-                                <Link to={`/forecast/${id}`}>
-                                    {moment(weatherItem.dt * 1000).format('MMM Do')}
-                                </Link>
-                            </td>
-                        ))}
-                    </tr>
+                    <tbody>
+                        <tr>
+                            {weather.data.list.map((weatherItem, id) => (
+                                <td key={id} className={id === selectedId ? "selected" : ""}>
+                                    <Link to={`/forecast/${id}`}>
+                                        {moment(weatherItem.dt * 1000).format('MMM Do')}
+                                    </Link>
+                                </td>
+                            ))}
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </Col>
@@ -58,7 +60,6 @@ function WeatherView({ weather, type, day }) {
 
     return (
         <Grid className="mainView">
-
             <Row>
                 <Col md={12}>
                     <h1>
