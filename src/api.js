@@ -2,7 +2,7 @@ import axios from 'axios';
 import { weatherTypes } from './redux/actions';
 
 const API_KEY = 'f3ad6c2ec893dcfc9bb23f45ebfc70a3'; // TODO
-const API_BASE_URL = 'http://api.openweathermap.org/data/2.5';
+const API_BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
 const weatherTypeApiUrlMap = {
     [weatherTypes.currentWeather]: 'weather',
